@@ -1,24 +1,29 @@
 pipeline {
-    agent {
-  label 'dev'
-}
-tools {
-  maven 'maven'
-}
+    agent any 
     stages {
-        stage('Git') {
+        stage('git checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/vamsibyramala/pet_shop.git'
+                git branch: 'master' ,
+                url: 'https://github.com/ajaypasili/petshop.git'
+
             }
         }
-        stage('maven') {
+
+        stage('sonar scanner') {
             steps {
-                sh 'mvn clean package'
+                withSonarQubeEnv('mysonarqube') {
+                sh 'mvn verify sonar:sonar'
+                }
             }
         }
-        stage('deploy') {
+
+        stage('docker build'){
             steps {
-                deploy adapters: [tomcat9(alternativeDeploymentContext: '', credentialsId: 'tomcat', path: '', url: 'http://18.216.225.116:8080/')], contextPath: 'myapp', war: '**/*.war'
+                sh '''
+                docker rmi -f tomcat-image
+                docker build -t tomcat-image .
+                docker run -dit --name mycont1 -p 8085:8080 tomcat-image
+                '''
             }
         }
     }
