@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pod-petshop
+  labels:
+    env: dev
+    owner: ajay
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      env: dev
+      owner: ajay
+
+  template:
+    metadata:
+      labels:
+        env: dev
+        owner: ajay
+
+    spec:
+      containers:
+      - name: mycont1
+        image: tomcat-image
+        ports:
+        - containerPort: 8080
