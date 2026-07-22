@@ -22,6 +22,7 @@ pipeline {
                 sh '''
                 docker rmi -f tomcat-image
                 docker build -t tomcat-image .
+                docker rm -f mycont1
                 docker run -dit --name mycont1 -p 8085:8080 tomcat-image
                 '''
             }
