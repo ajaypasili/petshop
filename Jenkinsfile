@@ -11,7 +11,7 @@ pipeline {
 
         stage('sonar scanner') {
             steps {
-                withSonarQubeEnv('mysonarqube') {
+                withSonarQubeEnv('ajaysonar') {
                 sh 'mvn verify sonar:sonar'
                 }
             }
