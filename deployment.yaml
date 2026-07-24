@@ -23,6 +23,6 @@ spec:
     spec:
       containers:
       - name: mycont1
-        image: tomcat-image
+        image: tomcat-image:v2
         ports:
         - containerPort: 8080
