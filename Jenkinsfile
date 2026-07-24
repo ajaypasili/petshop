@@ -46,7 +46,8 @@ pipeline {
         stage('docker push'){
             steps {
                 sh '''
-                docker push ajaypasili/tomcat-image
+                docker tag tomcat-image:v2 ajaypasili/tomcat-image:v2
+                docker push ajaypasili/tomcat-image:v2
                 '''
             }
         }
