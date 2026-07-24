@@ -11,7 +11,7 @@ pipeline {
 
         stage('sonar scanner') {
             steps {
-                withSonarQubeEnv('ajaysonar') {
+                withSonarQubeEnv('ajay-sonar') {
                 sh 'mvn verify sonar:sonar'
                 }
             }
@@ -22,10 +22,42 @@ pipeline {
                 sh '''
                 docker rmi -f tomcat-image
                 docker build -t tomcat-image .
-                docker rm -f mycont1
-                docker run -dit --name mycont1 -p 8085:8080 tomcat-image
                 '''
             }
         }
+        stage('trivy image scan'){
+            steps {
+                sh ' trivy image --severity HIGH,CRITICAL --exit-code 0 tomcat-image'
+            }
+        }
+        stage('Docker Login') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'docker-jenkins',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh '''
+                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                    '''
+                }
+            }
+        }
+        stage('docker push'){
+            steps {
+                sh '''
+                docker push ajaypasili/tomcat-image
+                '''
+            }
+        }
+        stage('Deploy to Minikube') {
+           steps {
+        sh '''
+        kubectl apply -f deployment.yaml
+        kubectl apply -f service.yaml
+        '''
+           }
+        }
+    
     }
 }
