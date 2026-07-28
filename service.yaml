@@ -5,7 +5,7 @@ metadata:
   name: petshop-service
 
 spec:
-  type: NodePort
+  type: LoadBalancer
 
   selector:
     env: dev
