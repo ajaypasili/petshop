@@ -21,15 +21,15 @@ pipeline {
         stage('Docker Build') {
             steps {
                 sh '''
-                docker rmi -f tomcat-image1:v2
-                docker build -t tomcat-image1:v2 .
+                docker rmi -f tomcat1-image:v2
+                docker build -t tomcat1-image:v2 .
                 '''
             }
         }
 
         stage('Trivy Scan') {
             steps {
-                sh 'trivy image --severity HIGH,CRITICAL --exit-code 0 tomcat-image1:v2'
+                sh 'trivy image --severity HIGH,CRITICAL --exit-code 0 tomcat1-image:v2'
             }
         }
 
