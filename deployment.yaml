@@ -23,6 +23,6 @@ spec:
     spec:
       containers:
       - name: mycont1
-        image: ajaypasili/tomcat-image:v2
+        image: ajaypasili/tomcat1-image:v2
         ports:
         - containerPort: 8080
