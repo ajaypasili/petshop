@@ -1,39 +1,42 @@
 pipeline {
-    agent any 
-    stages {
-        stage('git checkout') {
-            steps {
-                git branch: 'master' ,
-                url: 'https://github.com/ajaypasili/petshop.git'
+    agent any
 
+    stages {
+
+        stage('Git Checkout') {
+            steps {
+                git branch: 'master',
+                url: 'https://github.com/ajaypasili/petshop.git'
             }
         }
 
-        stage('sonar scanner') {
+        stage('SonarQube Scan') {
             steps {
                 withSonarQubeEnv('ajay-sonar') {
-                sh 'mvn verify sonar:sonar'
+                    sh 'mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar'
                 }
             }
         }
 
-        stage('docker build'){
+        stage('Docker Build') {
             steps {
                 sh '''
-                docker rmi -f tomcat-image:v2
+                docker rmi -f tomcat-image:v2 || true
                 docker build -t tomcat-image:v2 .
                 '''
             }
         }
-        stage('trivy image scan'){
+
+        stage('Trivy Scan') {
             steps {
-                sh ' trivy image --severity HIGH,CRITICAL --exit-code 0 tomcat-image'
+                sh 'trivy image --severity HIGH,CRITICAL --exit-code 0 tomcat-image:v2'
             }
         }
+
         stage('Docker Login') {
             steps {
                 withCredentials([usernamePassword(
-                    credentialsId: 'docker -jenkins',
+                    credentialsId: 'docker-jenkins',
                     usernameVariable: 'DOCKER_USER',
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
@@ -43,28 +46,31 @@ pipeline {
                 }
             }
         }
-        stage('docker push'){
+
+        stage('Docker Push') {
             steps {
                 sh '''
                 docker tag tomcat-image:v2 ajaypasili/tomcat-image:v2
                 docker push ajaypasili/tomcat-image:v2
+                docker logout
                 '''
             }
         }
-        stage('eks update') {
-           steps {
-        sh 'aws eks --region ap-south-1 update-kubeconfig --name my-cluster1'
-           }
+
+        stage('Update Kubeconfig') {
+            steps {
+                sh 'aws eks --region ap-south-1 update-kubeconfig --name my-cluster1'
+            }
         }
 
-        stage('eks deployment') {
+        stage('Deploy to EKS') {
             steps {
                 sh '''
                 kubectl apply -f deployment.yaml
                 kubectl apply -f service.yaml
+                kubectl rollout status deployment/petshop
                 '''
             }
         }
-    
     }
 }
