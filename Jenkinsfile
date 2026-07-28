@@ -21,7 +21,7 @@ pipeline {
         stage('Docker Build') {
             steps {
                 sh '''
-                docker rmi -f tomcat-image:v2 || true
+                docker rmi -f tomcat-image:v2
                 docker build -t tomcat-image:v2 .
                 '''
             }
