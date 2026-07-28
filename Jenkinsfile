@@ -21,22 +21,22 @@ pipeline {
         stage('Docker Build') {
             steps {
                 sh '''
-                docker rmi -f tomcat-image:v2
-                docker build -t tomcat-image:v2 .
+                docker rmi -f tomcat-image1:v2
+                docker build -t tomcat-image1:v2 .
                 '''
             }
         }
 
         stage('Trivy Scan') {
             steps {
-                sh 'trivy image --severity HIGH,CRITICAL --exit-code 0 tomcat-image:v2'
+                sh 'trivy image --severity HIGH,CRITICAL --exit-code 0 tomcat-image1:v2'
             }
         }
 
         stage('Docker Login') {
             steps {
                 withCredentials([usernamePassword(
-                    credentialsId: 'dockerhub',
+                    credentialsId: 'docker-jenkins',
                     usernameVariable: 'ajaypasili',
                     passwordVariable: 'Ajay@2001'
                 )]) {
@@ -50,8 +50,8 @@ pipeline {
         stage('Docker Push') {
             steps {
                 sh '''
-                docker tag tomcat-image:v2 ajaypasili/tomcat-image:v2
-                docker push ajaypasili/tomcat-image:v2
+                docker tag tomcat1-image:v2 ajaypasili/tomcat1-image:v2
+                docker push ajaypasili/tomcat1-image:v2
                 '''
             }
         }
@@ -67,7 +67,6 @@ pipeline {
                 sh '''
                 kubectl apply -f deployment.yaml
                 kubectl apply -f service.yaml
-                kubectl rollout status deployment/petshop
                 '''
             }
         }
