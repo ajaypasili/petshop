@@ -51,13 +51,19 @@ pipeline {
                 '''
             }
         }
-        stage('Deploy to Minikube') {
+        stage('eks update') {
            steps {
-        sh '''
-        kubectl apply -f deployment.yaml
-        kubectl apply -f service.yaml
-        '''
+        sh 'aws eks --region ap-south-1 update-kubeconfig --name my-cluster1'
            }
+        }
+
+        stage('eks deployment') {
+            steps {
+                sh '''
+                kubectl apply -f deployment.yaml
+                kubectl apply -f service.yaml
+                '''
+            }
         }
     
     }
