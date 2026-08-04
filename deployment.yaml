@@ -23,6 +23,6 @@ spec:
     spec:
       containers:
       - name: mycont1
-        image: ajaypasili/tomcat1-image:v2
+        image: ajaypasili/durga-image:v1
         ports:
         - containerPort: 8080
