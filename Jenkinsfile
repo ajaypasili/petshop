@@ -58,7 +58,7 @@ pipeline {
 
         stage('Update Kubeconfig') {
             steps {
-                sh 'aws eks --region ap-south-1 update-kubeconfig --name my-cluster'
+                sh 'aws eks --region ap-south-1 update-kubeconfig --name ajay-cluster'
             }
         }
 
