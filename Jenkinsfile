@@ -13,7 +13,7 @@ pipeline {
         stage('SonarQube Scan') {
             steps {
                 withSonarQubeEnv('ajay-sonar') {
-                    sh 'mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar'
+                    sh 'mvn verify sonar:sonar'
                 }
             }
         }
