@@ -12,7 +12,7 @@ pipeline {
 
         stage('SonarQube Scan') {
             steps {
-                withSonarQubeEnv('ajay-sonar') {
+                withSonarQubeEnv('jenkins-sonar') {
                     sh 'mvn verify sonar:sonar'
                 }
             }
