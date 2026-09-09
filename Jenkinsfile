@@ -21,15 +21,15 @@ pipeline {
         stage('Docker Build') {
             steps {
                 sh '''
-                docker rmi -f tomcat1-image:v2
-                docker build -t tomcat1-image:v2 .
+                docker rmi -f petshop:v1
+                docker build -t petshop:v1 .
                 '''
             }
         }
 
         stage('Trivy Scan') {
             steps {
-                sh 'trivy image --severity HIGH,CRITICAL --exit-code 0 tomcat1-image:v2'
+                sh 'trivy image --severity HIGH,CRITICAL --exit-code 0 petshop:v1'
             }
         }
 
@@ -50,8 +50,8 @@ pipeline {
         stage('Docker Push') {
             steps {
                 sh '''
-                docker tag tomcat1-image:v2 ajaypasili/tomcat1-image:v2
-                docker push ajaypasili/tomcat1-image:v2
+                docker tag petshop:v1 ajaypasili/petshop:v1
+                docker push ajaypasili/petshop:v1
                 '''
             }
         }
