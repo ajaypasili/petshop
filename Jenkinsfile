@@ -12,7 +12,7 @@ pipeline {
 
         stage('SonarQube Scan') {
             steps {
-                withSonarQubeEnv('sonar-jenkins') {
+                withSonarQubeEnv('sonar') {
                     sh 'mvn verify sonar:sonar'
                 }
             }
@@ -36,7 +36,7 @@ pipeline {
         stage('Docker Login') {
             steps {
                 withCredentials([usernamePassword(
-                    credentialsId: 'docker-jenkins',
+                    credentialsId: 'jenkins-docker',
                     usernameVariable: 'DOCKER_USER',
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
